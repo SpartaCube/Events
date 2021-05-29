@@ -1,0 +1,11 @@
+name: Events
+version: ${project.version}
+main: fr.iban.events.EventsPlugin
+api-version: 1.16
+depend: [ Core ]
+authors: [ Iban ]
+description: Plugin d'events
+
+commands:
+  event:
+  host:
