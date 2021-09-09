@@ -34,8 +34,8 @@ import fr.iban.events.options.Option;
 
 public class SumotoriEvent extends Event implements MoveBlockListener, PlayerDamageListener {
 
-	public SumotoriEvent(EventsPlugin plugin, EventManager manager) {
-		super(plugin, manager);
+	public SumotoriEvent(EventsPlugin plugin) {
+		super(plugin);
 	}
 
 	@Override
@@ -104,8 +104,7 @@ public class SumotoriEvent extends Event implements MoveBlockListener, PlayerDam
 	@Override
 	public SLocation getWaitSLocation() {
 		Location loc = getWaitingSpawnPoint();
-		SLocation sloc = new SLocation("Events", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
-		return sloc;
+		return new SLocation("Events", loc.getWorld().getName(), loc.getX(), loc.getY(), loc.getZ(), loc.getPitch(), loc.getYaw());
 	}
 
 	@Override

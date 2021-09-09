@@ -47,17 +47,18 @@ public class ConfigMenu extends Menu {
 					open();
 				}).open());
 			});
+		}else if(displayNameEquals(item, "§2§lRécompense de participation")) {
+			RewardsDAO.getTemplateRewardsAsync().thenAccept(rewards -> {
+				Bukkit.getScheduler().runTask(core, () -> new RewardSelectMenu(player, rewards, reward -> {
+					event.setParticipationReward(reward);
+					open();
+				}).open());
+			});
 		}else if(displayNameEquals(item, "§6§lAnnoncer")) {
 			core.getRedisClient().getTopic("EventAnnounce").publish(new EventAnnouce(event.getName(), event.getArena(), event.getType().getDesc(), event.getWaitSLocation(), player.getName()));
 		}else if(displayNameEquals(item, "§2§lLancer !")) {
-			//if(event.getPlayers().size() > 1) {
-				new StartTask(event).runTaskTimer(core, 0L, 20L);
-//			}else {
-//				player.sendMessage("§cIl faut plus d'un joueur pour lancer une partie !");
-//			}
-		}else {
-			return;
-		} 
+			new StartTask(event).runTaskTimer(core, 0L, 20L);
+		}
 	}
 
 	@Override
@@ -67,6 +68,12 @@ public class ConfigMenu extends Menu {
 			inventory.setItem(1, new ItemBuilder(Head.CHEST.get()).setName("§2§lRécompense").addLore("§aPermet de choisir une récompense.").build());
 		}else {
 			inventory.setItem(1, new ItemBuilder(Head.CHEST.get()).setName("§2§lRécompense").addLore("§aRécompense choisie : §2" + event.getReward().getName()).build());
+		}
+		
+		if(event.getParticipationReward() == null) {
+			inventory.setItem(2, new ItemBuilder(Head.CHEST.get()).setName("§2§lRécompense de participation").addLore("§aPermet de choisir une récompense.").build());
+		}else {
+			inventory.setItem(2, new ItemBuilder(Head.CHEST.get()).setName("§2§lRécompense de participation").addLore("§aRécompense choisie : §2" + event.getParticipationReward().getName()).build());
 		}
 		inventory.setItem(7, new ItemBuilder(Material.PAPER).setName("§6§lAnnoncer").addLore("§aAnnonce l'event sur tout le serveur (1 toutes les 1 minutes maximum)").build());
 		inventory.setItem(8, new ItemBuilder(Material.LIME_DYE).setName("§2§lLancer !").addLore("§aLance le jeu !").build());

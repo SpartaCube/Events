@@ -30,12 +30,13 @@ public abstract class Event {
 	protected GameState state = GameState.WAITING;
 	protected EventManager manager;
 	protected EventsPlugin plugin;
-	protected Reward reward;
+	protected Reward winReward;
+	protected Reward participationReward;
 
 
-	public Event(EventsPlugin plugin, EventManager manager) {
+	public Event(EventsPlugin plugin) {
 		this.plugin = plugin;
-		this.manager = manager;
+		this.manager = plugin.getEventManager();
 	}
 
 	
@@ -48,9 +49,9 @@ public abstract class Event {
 	public void finish() {
 		setGameState(GameState.FINISHED);
 		//CoreBukkitPlugin.getInstance().getRedisClient().getTopic("EventAnnounce").publish(new EventAnnouce(getName(), getArena(), getType().getDesc(), null, null));
-		if(reward != null) {
+		if(winReward != null) {
 			for(UUID uuid : winners) {
-				RewardsDAO.addRewardAsync(uuid.toString(), reward.getName(), reward.getServer(), reward.getCommand());
+				RewardsDAO.addRewardAsync(uuid.toString(), winReward.getName(), winReward.getServer(), winReward.getCommand());
 				Bukkit.getPlayer(uuid).sendMessage("§aVous avez reçu une récompense pour votre victoire ! (/recompenses)");
 			}
 		}
@@ -96,7 +97,7 @@ public abstract class Event {
 	}
 
 	public void start() {
-		for(Player player : getViewers(100)) {
+		for(Player player : getViewers(getWaitingSpawnPoint(), 100)) {
 			if(player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR)
 				continue;
 			addPlayer(player.getUniqueId());
@@ -129,6 +130,11 @@ public abstract class Event {
 						player.removePotionEffect(effect.getType());
 					}
 				}
+				
+				if(participationReward != null && !winners.contains(uuid)) {
+					RewardsDAO.addRewardAsync(uuid.toString(), participationReward.getName(), participationReward.getServer(), participationReward.getCommand());
+					Bukkit.getPlayer(uuid).sendMessage("§aVous avez reçu une récompense pour votre participation ! (/recompenses)");
+				}
 			}
 		}
 		getPlayers().remove(uuid);
@@ -145,13 +151,25 @@ public abstract class Event {
 	public Collection<Player> getViewers(int distance){
 		return getStartPoint().getNearbyPlayers(distance);
 	}
+	
+	public Collection<Player> getViewers(Location loc, int distance){
+		return loc.getNearbyPlayers(distance);
+	}
 
 	public Reward getReward() {
-		return reward;
+		return winReward;
 	}
 
 	public void setReward(Reward reward) {
-		this.reward = reward;
+		this.winReward = reward;
+	}
+	
+	public Reward getParticipationReward() {
+		return participationReward;
+	}
+	
+	public void setParticipationReward(Reward participationReward) {
+		this.participationReward = participationReward;
 	}
 	
 }

@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 
 import fr.iban.events.enums.EventType;
 import fr.iban.events.enums.GameState;
+import fr.iban.events.jump.JumpEvent;
 import fr.iban.events.options.IntOption;
 import fr.iban.events.options.LocationOption;
 import fr.iban.events.options.Option;
@@ -56,8 +57,10 @@ public class EventManager {
 		Event event = null;
 		switch (type) {
 		case SUMOTORI:
-			event = new SumotoriEvent(plugin, this);
+			event = new SumotoriEvent(plugin);
 			break;
+		case JUMP:
+			event = new JumpEvent(plugin);
 		default:
 			break;
 		}
@@ -84,13 +87,13 @@ public class EventManager {
 
 	public void joinEvent(Player player, Event event) {
 
-			if(event == null
-					|| player.getGameMode() == GameMode.CREATIVE 
-					|| player.getGameMode() == GameMode.SPECTATOR
-					|| isPlaying(player)
-					|| event.getGameState() == GameState.RUNNING) {
-				return;
-			}
+		if(event == null
+				|| player.getGameMode() == GameMode.CREATIVE 
+				|| player.getGameMode() == GameMode.SPECTATOR
+				|| isPlaying(player)
+				|| event.getGameState() == GameState.RUNNING) {
+			return;
+		}
 
 		event.addPlayer(player.getUniqueId());
 	}
@@ -148,16 +151,14 @@ public class EventManager {
 	public List<Option> getArenaOptions(EventType event, String arenaName){
 		List<Option> list = new ArrayList<>();
 		String path = event.toString().toLowerCase() + "." + arenaName + ".";
-		if(event == EventType.SUMOTORI) {
-			for(Option option : event.getArenaOptions()) {
-				list.add(option);
-				if(option instanceof IntOption) {
-					((IntOption) option).setIntValue(config.getInt(path+option.getName()));
-				}else if(option instanceof StringOption) {
-					((StringOption) option).setStringValue(config.getString(path+option.getName()));
-				}else if(option instanceof LocationOption) {
-					((LocationOption) option).setLocationValue(config.getLocation(path+option.getName()));
-				}
+		for(Option option : event.getArenaOptions()) {
+			list.add(option);
+			if(option instanceof IntOption) {
+				((IntOption) option).setIntValue(config.getInt(path+option.getName()));
+			}else if(option instanceof StringOption) {
+				((StringOption) option).setStringValue(config.getString(path+option.getName()));
+			}else if(option instanceof LocationOption) {
+				((LocationOption) option).setLocationValue(config.getLocation(path+option.getName()));
 			}
 		}
 		return list;

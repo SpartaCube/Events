@@ -18,7 +18,7 @@ public class StartTask extends BukkitRunnable {
 	public void run() {
 
 		if(timer == 10 || timer == 5 || timer == 5 || timer == 4 || timer == 3 || timer == 2 || timer == 1) {
-			event.getViewers(50).forEach(p -> {
+			event.getViewers(event.getWaitingSpawnPoint() ,100).forEach(p -> {
 				p.playSound(p.getLocation(), Sound.BLOCK_NOTE_BLOCK_FLUTE, 1f, 1f);
 				p.sendMessage("§aL'event va commencer dans " + timer + " secondes !");
 			});
