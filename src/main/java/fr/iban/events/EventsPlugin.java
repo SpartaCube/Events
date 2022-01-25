@@ -16,9 +16,11 @@ import fr.iban.events.listeners.TeleportListener;
 public final class EventsPlugin extends JavaPlugin {
 
 	private EventManager eventManager;
+	private static EventsPlugin instance;
 
 	@Override
 	public void onEnable() {
+		instance = this;
 		saveDefaultConfig();
 		eventManager = new EventManager(this);
 		getCommand("event").setExecutor(new EventCMD(this));
@@ -48,5 +50,7 @@ public final class EventsPlugin extends JavaPlugin {
 	public EventManager getEventManager() {
 		return eventManager;
 	}
+
+	public static EventsPlugin getInstance() { return instance; }
 
 }
