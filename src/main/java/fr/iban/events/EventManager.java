@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import fr.mrlaikz.spartaflag.FlagEvent;
 import org.bukkit.GameMode;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -61,6 +62,9 @@ public class EventManager {
 			break;
 		case JUMP:
 			event = new JumpEvent(plugin);
+			break;
+		case CAPTURE_THE_FLAG:
+			event = new FlagEvent(plugin);
 		default:
 			break;
 		}
